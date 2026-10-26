@@ -1,42 +1,64 @@
-DATABASE NORMALIZATION REPORT
+Database Normalization Report
 
-1. INTRODUCTION
+Student Course Registration System
 
-Normalization is the process of organizing data in a database to reduce duplication, prevent data anomalies, and improve data consistency.
+1. Introduction
 
-This report describes the normalization principles applied to the Student Course Registration System.
+Database normalization is the process of organizing data into related tables to reduce unnecessary duplication and prevent insertion, update, and deletion anomalies.
 
-2. UNNORMALIZED FORM (UNF)
+This report explains how the Student Course Registration System is organized using Unnormalized Form (UNF), First Normal Form (1NF), Second Normal Form (2NF), and Third Normal Form (3NF).
 
-In an unnormalized database, student, department, course, and lecturer information could be stored together in one large table. A student taking multiple courses might have several course and lecturer details stored in repeating groups.
+2. Unnormalized Form (UNF)
 
-This structure can lead to duplicated data and difficulties when inserting, updating, or deleting records.
+Initially, student, department, course, and lecturer details could be stored in one large table.
 
-3. FIRST NORMAL FORM (1NF)
+| Student ID | Student Name | Department | Courses | Lecturers |
+|---|---|---|---|---|
+| 101 | Ada Okafor | Software Engineering | CSC301, CSC302 | Mr James, Mrs Bello |
 
-A table is in First Normal Form when every field contains a single value and there are no repeating groups.
+This structure contains multiple course and lecturer values in single fields. It can cause data duplication and make individual course registrations difficult to manage.
 
-The database is organized into separate tables with individual fields. Each table has a primary key that uniquely identifies its records.
+3. First Normal Form (1NF)
 
-4. SECOND NORMAL FORM(2NF)
+A table is in First Normal Form when each field contains a single value and there are no repeating groups.
 
-A table is in Second Normal Form when it is in 1NF and every non-key attribute depends on the whole of each candidate key, not just part of a composite key.
+The example can be changed into individual registration rows:
 
-Student, Course, and Lecturer information is stored separately. The Enrolment table connects students with courses, while Course_Lecturer connects courses with lecturers.
+| Student ID | Student Name | Department | Course Code | Lecturer Name |
+|---|---|---|---|---|
+| 101 | Ada Okafor | Software Engineering | CSC301 | Mr James |
+| 101 | Ada Okafor | Software Engineering | CSC302 | Mrs Bello |
 
-This arrangement helps reduce unnecessary duplication in relationship records.
+Each row now contains one course registration. However, student and department information is repeated, so further normalization is needed.
 
-5. THIRD NORMAL FORM (3NF)
+4. Second Normal Form (2NF)
+
+A table is in Second Normal Form when it is in 1NF and every non-key attribute depends on the whole of every candidate key, rather than only part of a composite key.
+
+To reduce duplication, student details, course details, and registrations are stored separately:
+
+- **Student:** Stores student details, including student_id, matric_no, full_name, and dept_id.
+- **Course:** Stores course details, including course_id, course_code, and course_title.
+- **Enrolment:** Connects students to courses using student_id and course_id, and records the academic session.
+
+For example, a student's name is stored once in Student instead of being repeated for every course registration.
+
+5. Third Normal Form (3NF)
 
 A table is in Third Normal Form when it is in 2NF and non-key attributes do not depend transitively on a candidate key.
 
-Department information is stored in the Department table. Student and Lecturer records reference the department through dept_id instead of repeatedly storing department details.
+The database separates department and lecturer information:
 
-Course details are stored in Course, while enrolment and course-lecturer assignments are stored in their respective tables.
+- **Department:** Stores dept_id and dept_name.
+- **Student:** References Department through dept_id.
+- **Lecturer:** Stores lecturer_id, lecturer_name, and dept_id.
+- **Course_Lecturer:** Connects courses to lecturers and records the academic session.
 
-6. FINAL DATABASE SCHEMA
+For example, the department name is stored in Department rather than repeated in every Student record. The foreign key dept_id identifies the department associated with a student or lecturer.
 
-The database contains the following tables:
+6. Final Database Schema
+
+The final database contains six tables:
 
 1. **Department:** dept_id (PK), dept_name
 2. **Student:** student_id (PK), matric_no, full_name, dept_id (FK)
@@ -45,8 +67,8 @@ The database contains the following tables:
 5. **Enrolment:** enrolment_id (PK), student_id (FK), course_id (FK), session
 6. **Course_Lecturer:** course_lecturer_id (PK), course_id (FK), lecturer_id (FK), session
 
-PK means Primary Key, and FK means Foreign Key.
+**PK** means Primary Key, which uniquely identifies each record. **FK** means Foreign Key, which references a key in another table and helps maintain referential integrity.
 
-7. CONCLUSION
+7. Conclusion
 
-The database separates student, department, lecturer, course, enrolment, and course-lecturer information into related tables. Primary and foreign keys help maintain data integrity, while the separate tables reduce unnecessary duplication and support a structured Student Course Registration System.
+The Student Course Registration System separates student, department, lecturer, course, enrolment, and course-lecturer information into related tables. This design reduces unnecessary duplication and helps prevent data anomalies. Primary keys and foreign keys establish relationships between the tables and support data integrity.
